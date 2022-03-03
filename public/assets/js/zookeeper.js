@@ -1,5 +1,19 @@
 const $displayArea = document.querySelector('#display-area');
+const $zookeeperForm = document.querySelector("#zookeeper-form");
 
+const handleGetZookeepersSubmit = event => {
+  console.log("got here")
+  event.preventDefault();
+
+  const nameHTML = $zookeeperForm.querySelector('[name="name"]');
+  const name = nameHTML.value;
+  const ageHTML = $zookeeperForm.querySelector('[name="age"]');
+  const age = ageHTML.value;
+  const zookeeperObject = { name, age };
+
+  getZookeepers(zookeeperObject);
+
+}
 const printResults = resultArr => {
   console.log(resultArr);
 
@@ -19,9 +33,14 @@ const printResults = resultArr => {
 
   $displayArea.innerHTML = animalHTML.join('');
 };
+const getZookeepers = (formData = {}) => {
+  let queryURL = '/api/zookeepers?';
 
-const getZookeepers = () => {
-  fetch('/api/zookeepers')
+  Object.entries(formData).forEach(([key, value]) => {
+    queryURL += `${key}=${value}&`
+  })
+
+  fetch(queryURL)
     .then(response => {
       if (!response.ok) {
         return alert('Error: ' + response.statusText);
@@ -35,3 +54,5 @@ const getZookeepers = () => {
 };
 
 getZookeepers();
+
+$zookeeperForm.addEventListener('submit', handleGetZookeepersSubmit);
